@@ -1,0 +1,707 @@
+nable
+Password: 
+IRI-Router#terminal length 0
+IRI-Router#show running-config
+Building configuration...
+
+Current configuration : 20031 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log uptime
+service password-encryption
+!
+hostname IRI-Router
+!
+boot-start-marker
+boot system flash:c2800nm-advsecurityk9-mz.124-9.t1.bin
+boot-end-marker
+!
+logging buffered 4096 debugging
+enable password 7 12490856161D2C16
+!
+aaa new-model
+!
+!
+aaa group server radius IRIDIUM
+ server 10.20.30.16 auth-port 1812 acct-port 1813
+!
+aaa authentication login default group IRIDIUM local
+aaa authentication login ciscocp_vpn_xauth_ml_1 local
+aaa authentication login userauthen local
+aaa authorization network ciscocp_vpn_group_ml_1 local 
+aaa authorization network groupauthor local 
+!
+aaa session-id common
+!
+resource policy
+!
+clock timezone Erbil 3
+!
+!
+ip cef
+no ip dhcp use vrf connected
+ip dhcp excluded-address 10.20.40.1 10.20.40.20
+ip dhcp excluded-address 10.20.50.1 10.20.50.40
+ip dhcp excluded-address 10.20.40.253
+ip dhcp excluded-address 10.20.110.3
+ip dhcp excluded-address 10.20.32.1
+ip dhcp excluded-address 10.20.34.1 10.20.34.10
+ip dhcp excluded-address 10.10.1.1 10.10.1.20
+ip dhcp excluded-address 10.10.110.1 10.10.110.20
+ip dhcp excluded-address 172.17.31.1 172.17.31.40
+ip dhcp excluded-address 10.20.30.114
+ip dhcp excluded-address 10.11.10.1 10.11.10.20
+ip dhcp excluded-address 10.20.40.254
+ip dhcp excluded-address 10.20.32.2
+ip dhcp excluded-address 10.20.32.35
+!
+ip dhcp pool 40
+   network 10.20.40.0 255.255.255.0
+   default-router 10.20.40.1 
+   dns-server 8.8.8.8 
+!
+ip dhcp pool Apartment
+   network 10.20.50.0 255.255.255.0
+   default-router 10.20.50.1 
+   dns-server 8.8.8.8 4.2.2.2 
+!
+ip dhcp pool PhoneKitchen
+   network 10.20.60.0 255.255.255.0
+   default-router 10.20.60.1 
+   dns-server 31.25.141.130 31.25.136.100 
+   option 150 ip 10.20.30.2 
+!
+ip dhcp pool 7940Phone
+   network 10.20.100.0 255.255.255.0
+   default-router 10.20.100.1 
+   dns-server 8.8.8.8 4.2.2.2 
+   option 150 ip 10.20.30.2 
+!
+ip dhcp pool WL
+   network 10.20.32.0 255.255.254.0
+   default-router 10.20.32.1 
+   dns-server 208.67.222.222 208.67.220.220 
+!
+ip dhcp pool Data-2
+   network 10.20.34.0 255.255.254.0
+   default-router 10.20.34.1 
+   dns-server 208.67.222.222 208.67.220.220 
+!
+ip dhcp pool vlan-200
+   network 10.10.110.0 255.255.255.0
+   default-router 10.10.110.1 
+   dns-server 8.8.8.8 
+   option 43 hex 0a0a.6e0a
+   domain-name test.local
+   option 4 ip 10.20.30.1 
+   option 42 ip 10.20.30.1 
+   update arp
+!
+ip dhcp pool Ranya-PC
+   host 10.20.30.114 255.255.255.0
+   client-identifier b4b6.8694.840c
+!
+ip dhcp pool VOIP-Test
+   network 10.11.10.0 255.255.255.0
+   default-router 10.11.10.1 
+   option 150 ip 10.11.10.9 10.12.10.9 
+!
+ip dhcp pool Maryam-PC
+   host 10.20.30.86 255.255.255.0
+   client-identifier c8d3.ffbf.3e77
+!
+!
+ip tftp source-interface Vlan1
+ip domain name rotana@.com
+ip host ERI-VM-ESX03.rotana.com 10.250.3.13
+ip host ERI-VM-MGT.rotana.com 10.250.3.20
+ip host ERI-VM-ESX01.rotana.com 10.250.3.11
+ip host ERI-VM-ESX02.rotana.com 10.250.3.12
+ip host ERI-VM-VC.rotana.com 10.250.3.10
+ip host pbx.iridium.local 10.20.30.19
+ip host pbx.iridium.com 10.20.30.2
+ip name-server 8.8.8.8
+ip name-server 4.2.2.2
+vpdn enable
+!
+vpdn-group 1
+! Default PPTP VPDN group
+ accept-dialin
+  protocol pptp
+  virtual-template 1
+!
+!
+ftp-server enable
+ftp-server topdir flash:
+!
+!
+!
+crypto ctcp 
+username admin privilege 15 password 7 0871410F0D0F2505
+username voip password 7 051D090631
+username EZVPN password 7 01363C326B25472F62080B
+username support password 7 04481E161F2E5E5A
+username makram password 7 1104180E0513064D24696F61
+username cucm privilege 15 password 7 0106050743
+username user password 7 051E150A33
+username user10 password 7 0323492B164E721E1F
+username VPN password 7 044D1B08
+username mahdi secret 5 $1$pkcj$8duzL800dXBTGHKGJm1Nu/
+!
+!
+track 1 rtr 1 reachability
+!
+track 2 rtr 2 reachability
+!
+track 100 ip route 169.254.38.169 255.255.255.255 reachability
+!
+track 200 ip route 169.254.55.133 255.255.255.255 reachability
+!
+class-map match-any FILTER
+ match protocol bittorrent
+!
+! 
+crypto keyring keyring-vpn-0f5ff135306218a6d-0 
+  local-address 213.32.254.108
+  pre-shared-key address 15.184.61.105 key D_tO785pAV9SjD_sOy_x7fU0Z1WBd7QU
+crypto keyring keyring-vpn-0f5ff135306218a6d-1 
+  local-address 213.32.254.108
+  pre-shared-key address 15.185.190.105 key 3Hypty0kYVVJskuyEZI_AaIn.HWpLOun
+!
+crypto isakmp policy 1
+ encr aes 256
+ group 2
+ lifetime 3600
+!
+crypto isakmp policy 3
+ encr 3des
+ authentication pre-share
+ group 2
+!
+crypto isakmp policy 4
+ encr aes 256
+ authentication pre-share
+ group 5
+!
+crypto isakmp policy 200
+ encr aes
+ authentication pre-share
+ group 2
+ lifetime 28800
+!
+crypto isakmp policy 201
+ encr aes
+ authentication pre-share
+ group 2
+ lifetime 28800
+crypto isakmp key ibm5@TPX address 93.185.81.88 no-xauth
+crypto isakmp key 6 0m!dv@r address 212.237.112.19 no-xauth
+crypto isakmp key 0m!dv@r address 18.205.194.168
+crypto isakmp keepalive 10 10
+!
+crypto isakmp client configuration group vpngrp
+ key cisco123
+ dns 8.8.8.8 4.2.2.2
+ domain iridium.com
+ pool VPN-Pool
+ acl 111
+crypto isakmp profile ciscocp-ike-profile-1
+   match identity group iridium
+   client authentication list ciscocp_vpn_xauth_ml_1
+   isakmp authorization list ciscocp_vpn_group_ml_1
+   client configuration address respond
+   virtual-template 2
+crypto isakmp profile isakmp-vpn-0f5ff135306218a6d-0
+   keyring keyring-vpn-0f5ff135306218a6d-0
+   match identity address 15.184.61.105 255.255.255.255 
+   local-address 213.32.254.108
+crypto isakmp profile isakmp-vpn-0f5ff135306218a6d-1
+   keyring keyring-vpn-0f5ff135306218a6d-1
+   match identity address 15.185.190.105 255.255.255.255 
+   local-address 213.32.254.108
+!
+crypto ipsec security-association replay window-size 128
+!
+crypto ipsec transform-set myset esp-3des esp-sha-hmac 
+crypto ipsec transform-set ESP-3DES-SHA esp-3des esp-sha-hmac 
+crypto ipsec transform-set ibm5@TPX esp-aes 256 esp-md5-hmac 
+crypto ipsec transform-set 0m!dv@r esp-3des esp-sha-hmac 
+crypto ipsec transform-set ipsec-prop-vpn-0f5ff135306218a6d-0 esp-aes esp-sha-hmac 
+crypto ipsec transform-set ipsec-prop-vpn-0f5ff135306218a6d-1 esp-aes esp-sha-hmac 
+crypto ipsec transform-set speedusion esp-aes 256 esp-sha-hmac 
+crypto ipsec df-bit clear
+!
+crypto ipsec profile CiscoCP_Profile1
+ set transform-set ESP-3DES-SHA 
+ set isakmp-profile ciscocp-ike-profile-1
+!
+crypto ipsec profile Keyzone
+ set transform-set ibm5@TPX 
+ set pfs group5
+!
+crypto ipsec profile Keyzone-Erbil
+ set transform-set 0m!dv@r 
+!
+crypto ipsec profile ipsec-vpn-0f5ff135306218a6d-0
+ set transform-set ipsec-prop-vpn-0f5ff135306218a6d-0 
+ set pfs group2
+!
+crypto ipsec profile ipsec-vpn-0f5ff135306218a6d-1
+ set transform-set ipsec-prop-vpn-0f5ff135306218a6d-1 
+ set pfs group2
+!
+!
+crypto dynamic-map dynmap 10
+ set transform-set myset 
+ reverse-route
+!
+!
+crypto map clientmap client authentication list userauthen
+crypto map clientmap isakmp authorization list groupauthor
+crypto map clientmap client configuration address respond
+crypto map clientmap 10 ipsec-isakmp dynamic dynmap 
+!
+crypto map speedfusion 10 ipsec-isakmp 
+ set peer 18.205.194.168
+ set transform-set speedusion 
+ match address speedfusion
+!
+!
+!
+bba-group pppoe global
+!
+!
+interface Tunnel1
+ description VPN-To-ZIWO
+ ip address 169.254.38.170 255.255.255.252
+ ip virtual-reassembly
+ ip tcp adjust-mss 1379
+ tunnel source 213.32.254.108
+ tunnel destination 15.184.61.105
+ tunnel mode ipsec ipv4
+ tunnel protection ipsec profile ipsec-vpn-0f5ff135306218a6d-0
+!
+interface Tunnel2
+ description To-ZIWO-VPN
+ ip address 169.254.55.134 255.255.255.252
+ ip virtual-reassembly
+ ip tcp adjust-mss 1379
+ tunnel source 213.32.254.108
+ tunnel destination 15.185.190.105
+ tunnel mode ipsec ipv4
+ tunnel protection ipsec profile ipsec-vpn-0f5ff135306218a6d-1
+!
+interface Tunnel10
+ description To Keyzone-Mikrotik
+ ip address 192.168.199.2 255.255.255.252
+ ip mtu 1300
+ tunnel source 213.32.254.108
+ tunnel destination 212.237.112.19
+!
+interface Tunnel11
+ no ip address
+ tunnel source 213.32.254.108
+ tunnel destination 93.185.81.88
+ tunnel mode ipsec ipv4
+ tunnel protection ipsec profile Keyzone
+!
+interface Tunnel100
+ ip address 192.168.100.2 255.255.255.252
+ tunnel source 213.32.254.108
+ tunnel destination 44.211.44.150
+!
+interface Tunnel200
+ ip address 192.168.220.1 255.255.255.252
+ ip mtu 1376
+ tunnel source 213.32.254.108
+ tunnel destination 23.82.140.139
+!
+interface Loopback1
+ ip address 10.11.0.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/0
+ ip address 185.98.24.98 255.255.255.240
+ ip nat outside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+ crypto map clientmap
+!
+interface GigabitEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1.2
+ encapsulation dot1Q 2
+ ip address 172.17.38.1 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.10
+ description *** Iridium Local Network ****
+ encapsulation dot1Q 10
+ ip address 10.20.30.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.11
+ encapsulation dot1Q 11
+ ip address 10.20.11.1 255.255.255.0
+!
+interface GigabitEthernet0/1.30
+ encapsulation dot1Q 30
+ ip address 10.2.1.2 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.32
+ encapsulation dot1Q 32
+ ip address 10.20.32.1 255.255.254.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.34
+ encapsulation dot1Q 34
+ ip address 10.20.34.1 255.255.254.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.40
+ description -- Iridium Camera's --
+ encapsulation dot1Q 40
+ ip address 10.20.40.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.50
+ description -- Iridium Apartment --
+ encapsulation dot1Q 50
+ ip address 10.20.50.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.60
+ encapsulation dot1Q 60
+ ip address 10.20.60.1 255.255.255.0
+!
+interface GigabitEthernet0/1.100
+ encapsulation dot1Q 100
+ ip address 10.20.100.1 255.255.255.0
+!
+interface GigabitEthernet0/1.101
+ encapsulation dot1Q 101
+ ip address 10.250.1.150 255.255.255.0
+!
+interface GigabitEthernet0/1.103
+ encapsulation dot1Q 103
+ ip address 10.250.3.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.109
+ encapsulation dot1Q 109
+ ip address 10.250.9.1 255.255.255.0
+!
+interface GigabitEthernet0/1.111
+ encapsulation dot1Q 111
+ ip address 10.10.11.1 255.255.255.0
+ shutdown
+!
+interface GigabitEthernet0/1.192
+ encapsulation dot1Q 192
+ ip address 192.168.111.2 255.255.255.252
+!
+interface GigabitEthernet0/1.200
+ encapsulation dot1Q 200
+ ip address 10.10.110.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.400
+ encapsulation dot1Q 400
+ ip address 10.11.10.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.401
+ encapsulation dot1Q 401
+ ip address 10.12.10.1 255.255.255.0
+!
+interface Serial0/0/0
+ no ip address
+ shutdown
+ no fair-queue
+ clock rate 2000000
+!
+interface Serial0/0/1
+ no ip address
+ shutdown
+ clock rate 2000000
+!
+interface FastEthernet1/0
+!
+interface FastEthernet1/1
+!
+interface FastEthernet1/2
+!
+interface FastEthernet1/3
+!
+interface FastEthernet1/4
+!
+interface FastEthernet1/5
+!
+interface FastEthernet1/6
+!
+interface FastEthernet1/7
+!
+interface FastEthernet1/8
+!
+interface FastEthernet1/9
+!
+interface FastEthernet1/10
+!
+interface FastEthernet1/11
+!
+interface FastEthernet1/12
+!
+interface FastEthernet1/13
+!
+interface FastEthernet1/14
+!
+interface FastEthernet1/15
+!
+interface Virtual-Template1 
+ no ip address
+ ip nat inside
+ ip virtual-reassembly
+ peer default ip address pool POOL
+ ppp authentication ms-chap ms-chap-v2
+!
+interface Virtual-Template2 type tunnel
+ no ip address
+ tunnel mode ipsec ipv4
+ tunnel protection ipsec profile CiscoCP_Profile1
+!
+interface Vlan1
+ ip address 213.32.254.108 255.255.255.0
+ ip mtu 1400
+ ip nat outside
+ ip virtual-reassembly
+ ip tcp adjust-mss 1360
+ ip policy route-map VPN-Client
+ crypto map clientmap
+!
+interface Vlan11
+ no ip address
+ shutdown
+!
+interface Vlan100
+ no ip address
+!
+ip local pool POOL 192.168.100.10 192.168.100.20
+ip local pool VPN-Pool 192.168.0.20 192.168.0.50
+ip local pool webvpn-pool 192.168.9.80 192.168.9.85
+ip route 0.0.0.0 0.0.0.0 213.32.254.1
+ip route 10.10.0.0 255.255.0.0 192.168.100.1
+ip route 10.20.110.0 255.255.255.0 192.168.111.1
+ip route 10.20.120.0 255.255.255.0 192.168.199.1
+ip route 10.20.121.0 255.255.255.0 192.168.199.1
+ip route 10.20.199.0 255.255.255.0 192.168.111.1
+ip route 10.20.200.0 255.255.255.0 Tunnel11
+ip route 10.50.1.10 255.255.255.255 Tunnel1
+ip route 35.201.95.83 255.255.255.255 Tunnel200
+ip route 192.168.50.0 255.255.255.0 192.168.100.1
+!
+!
+ip http server
+ip http secure-server
+ip dns server
+ip nat inside source list 100 interface Vlan1 overload
+ip nat inside source static tcp 10.20.30.208 22 interface Vlan1 33335
+ip nat inside source static tcp 10.20.30.9 3389 interface Vlan1 3333
+ip nat inside source static tcp 10.20.40.3 80 interface Vlan1 80
+ip nat inside source static tcp 10.20.40.220 8000 interface Vlan1 9000
+ip nat inside source static tcp 10.20.40.220 80 interface Vlan1 90
+ip nat inside source static tcp 10.20.40.3 8000 interface Vlan1 8000
+ip nat inside source static tcp 10.20.40.253 8000 interface Vlan1 9001
+ip nat inside source static tcp 10.20.40.253 80 interface Vlan1 8080
+ip nat inside source static tcp 10.20.30.207 3389 interface Vlan1 33333
+ip nat inside source static tcp 10.20.30.9 443 interface Vlan1 443
+ip nat inside source static udp 10.20.30.9 161 interface Vlan1 161
+ip nat inside source static udp 10.20.30.9 162 interface Vlan1 162
+ip nat inside source static tcp 10.20.30.9 162 interface Vlan1 162
+ip nat inside source static tcp 10.20.30.9 161 interface Vlan1 161
+ip nat inside source static tcp 10.20.30.208 3389 interface Vlan1 33334
+!
+ip access-list extended IRIDIUM-LOCAL
+ permit ip any host 10.20.30.2
+ permit ip host 10.20.50.10 any
+ permit ip host 10.20.50.11 any
+ deny   ip 10.20.50.0 0.0.0.255 any
+ permit ip any any
+ip access-list extended speedfusion
+ permit ip 10.20.30.0 0.0.0.255 192.168.1.0 0.0.0.255
+ permit ip 10.20.30.0 0.0.0.255 192.168.0.0 0.0.0.255
+!
+ip sla 1
+ icmp-echo 185.14.248.25 source-ip 185.14.248.27
+ip sla schedule 1 life forever start-time now
+ip sla 2
+ icmp-echo 185.98.24.97 source-ip 185.98.24.98
+ip sla schedule 2 life forever start-time now
+ip sla 100
+ icmp-echo 169.254.38.169 source-interface Tunnel1
+ timeout 1000
+ frequency 5
+ip sla schedule 100 life forever start-time now
+ip sla 200
+ icmp-echo 169.254.55.133 source-interface Tunnel2
+ timeout 1000
+ frequency 5
+ip sla schedule 200 life forever start-time now
+logging 10.20.30.16
+access-list 100 deny   ip host 10.20.30.9 host 35.201.95.83
+access-list 100 permit ip 10.20.32.0 0.0.1.255 any
+access-list 100 permit ip 10.20.50.0 0.0.0.255 any
+access-list 100 permit ip 10.10.1.0 0.0.0.255 any
+access-list 100 permit ip 10.10.110.0 0.0.0.255 any
+access-list 100 permit ip 10.20.110.0 0.0.0.255 any
+access-list 100 deny   ip 10.20.30.0 0.0.0.255 192.168.0.0 0.0.0.255
+access-list 100 deny   ip 10.20.30.0 0.0.0.255 10.20.200.0 0.0.0.255
+access-list 100 deny   ip 10.20.0.0 0.0.254.255 10.20.200.0 0.0.0.255
+access-list 100 deny   ip 10.20.40.0 0.0.0.255 192.168.0.0 0.0.0.255
+access-list 100 deny   ip 10.20.30.0 0.0.0.255 192.168.10.0 0.0.0.255
+access-list 100 deny   ip 10.20.30.0 0.0.0.255 192.168.0.0 0.0.255.255
+access-list 100 deny   ip 10.20.40.0 0.0.0.255 192.168.10.0 0.0.0.255
+access-list 100 deny   ip 10.20.30.0 0.0.0.255 172.16.1.0 0.0.0.255
+access-list 100 permit ip 10.20.30.0 0.0.0.255 any
+access-list 100 permit ip 10.20.40.0 0.0.0.255 any
+access-list 100 permit ip 192.168.100.0 0.0.0.255 any
+access-list 100 permit ip 192.168.0.0 0.0.0.255 any
+access-list 100 permit ip 10.11.0.0 0.0.0.255 any
+access-list 100 permit ip 10.20.34.0 0.0.1.255 any
+access-list 100 permit ip 10.11.10.0 0.0.0.255 any
+access-list 100 permit ip 172.16.2.0 0.0.0.255 any
+access-list 100 permit ip 10.2.1.0 0.0.0.255 any
+access-list 100 permit ip 10.250.3.0 0.0.0.255 any
+access-list 102 permit ip 10.20.50.0 0.0.0.255 any
+access-list 111 permit ip 10.20.0.0 0.0.255.255 192.168.0.0 0.0.0.255
+access-list 120 permit ip host 0.0.0.0 any
+access-list 123 permit ip 10.20.30.0 0.0.0.255 10.20.120.0 0.0.0.255
+access-list 144 permit ip 192.168.0.0 0.0.0.255 any
+access-list 150 permit ip 0.0.0.0 255.255.255.0 0.0.0.0 255.255.255.0
+access-list 190 permit ip host 10.20.30.9 any
+snmp-server community iridium RW
+snmp-server community iridiump@$$ RW
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps vrrp
+snmp-server enable traps ds1
+snmp-server enable traps tty
+snmp-server enable traps eigrp
+snmp-server enable traps flash insertion removal
+snmp-server enable traps ds3
+snmp-server enable traps envmon
+snmp-server enable traps icsudsu
+snmp-server enable traps isdn call-information
+snmp-server enable traps isdn layer2
+snmp-server enable traps isdn chan-not-avail
+snmp-server enable traps isdn ietf
+snmp-server enable traps ds0-busyout
+snmp-server enable traps ds1-loopback
+snmp-server enable traps disassociate
+snmp-server enable traps deauthenticate
+snmp-server enable traps authenticate-fail
+snmp-server enable traps dot11-qos
+snmp-server enable traps wlan-wep
+snmp-server enable traps switch-over
+snmp-server enable traps rogue-ap
+snmp-server enable traps bgp
+snmp-server enable traps memory bufferpeak
+snmp-server enable traps cnpd
+snmp-server enable traps config-copy
+snmp-server enable traps config
+snmp-server enable traps entity
+snmp-server enable traps fru-ctrl
+snmp-server enable traps event-manager
+snmp-server enable traps frame-relay multilink bundle-mismatch
+snmp-server enable traps frame-relay
+snmp-server enable traps frame-relay subif
+snmp-server enable traps hsrp
+snmp-server enable traps ipmulticast
+snmp-server enable traps msdp
+snmp-server enable traps mvpn
+snmp-server enable traps ospf state-change
+snmp-server enable traps ospf errors
+snmp-server enable traps ospf retransmit
+snmp-server enable traps ospf lsa
+snmp-server enable traps ospf cisco-specific state-change nssa-trans-change
+snmp-server enable traps ospf cisco-specific state-change shamlink interface-old
+snmp-server enable traps ospf cisco-specific state-change shamlink neighbor
+snmp-server enable traps ospf cisco-specific errors
+snmp-server enable traps ospf cisco-specific retransmit
+snmp-server enable traps ospf cisco-specific lsa
+snmp-server enable traps pim neighbor-change rp-mapping-change invalid-pim-message
+snmp-server enable traps pppoe
+snmp-server enable traps cpu threshold
+snmp-server enable traps rsvp
+snmp-server enable traps syslog
+snmp-server enable traps l2tun session
+snmp-server enable traps vtp
+snmp-server enable traps aaa_server
+snmp-server enable traps atm subif
+snmp-server enable traps firewall serverstatus
+snmp-server enable traps isakmp policy add
+snmp-server enable traps isakmp policy delete
+snmp-server enable traps isakmp tunnel start
+snmp-server enable traps isakmp tunnel stop
+snmp-server enable traps ipsec cryptomap add
+snmp-server enable traps ipsec cryptomap delete
+snmp-server enable traps ipsec cryptomap attach
+snmp-server enable traps ipsec cryptomap detach
+snmp-server enable traps ipsec tunnel start
+snmp-server enable traps ipsec tunnel stop
+snmp-server enable traps ipsec too-many-sas
+snmp-server enable traps rtr
+!
+!
+route-map VPN-Client permit 10
+ match ip address 144
+ set ip next-hop 10.11.0.2
+!
+!
+tftp-server flash:anyconnect-macosx-i386-3.1.03103-k9.pkg
+tftp-server flash:anyconnect-win-4.3.05017-k9.pkg
+!
+control-plane
+!
+!
+!
+line con 0
+line aux 0
+line vty 0
+ exec-timeout 0 0
+ password 7 08316C0A4D0E550516
+ transport input telnet ssh
+line vty 1
+ exec-timeout 0 0
+ password 7 03074E080B56
+ transport input telnet ssh
+line vty 2 4
+ exec-timeout 0 0
+ transport input telnet ssh
+line vty 5 15
+ transport input telnet ssh
+!
+scheduler allocate 20000 1000
+ntp clock-period 17179788
+ntp source GigabitEthernet0/1.2
+ntp master 1
+ntp server 128.138.140.44 prefer
+!
+end
+
+IRI-Router#
