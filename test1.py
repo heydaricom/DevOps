@@ -27,7 +27,7 @@ try:
 
     # Send command to get configuration
     ssh_shell.send("terminal length 0\n")  # To disable pagination
-    213.32.254.108ssh_shell.send("show running-config\n")
+    ssh_shell.send("show running-config\n")
     
     # Wait for the command to complete (adjust the delay based on your network)
     import time
